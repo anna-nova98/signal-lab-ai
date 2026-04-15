@@ -1,6 +1,8 @@
 import { LoggerService } from '@nestjs/common';
 import * as winston from 'winston';
-import LokiTransport from 'winston-loki';
+// winston-loki uses CommonJS default export
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const LokiTransport = require('winston-loki');
 
 let winstonInstance: winston.Logger;
 

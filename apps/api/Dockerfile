@@ -1,11 +1,11 @@
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /app
 
-# Copy prisma schema first (needed for client generation)
-COPY prisma ./prisma
+# Install OpenSSL for Prisma
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
-# Install API deps
+COPY prisma ./prisma
 COPY apps/api/package.json ./
 RUN npm install
 
@@ -16,9 +16,11 @@ RUN npx prisma generate
 RUN npm run build
 
 # ─── Production image ────────────────────────────────────────────────────────
-FROM node:20-alpine AS runner
+FROM node:20-slim AS runner
 
 WORKDIR /app
+
+RUN apt-get update -y && apt-get install -y openssl wget && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/package.json ./
 RUN npm install --omit=dev
