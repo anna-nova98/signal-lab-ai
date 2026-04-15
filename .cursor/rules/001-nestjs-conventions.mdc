@@ -1,0 +1,52 @@
+---
+description: NestJS coding conventions for Signal Lab API
+globs: ["apps/api/src/**/*.ts"]
+alwaysApply: true
+---
+
+# NestJS Conventions
+
+## Module structure
+- One module per feature (e.g., `ScenarioModule`, `MetricsModule`)
+- Feature folder: `src/<feature>/<feature>.module.ts`, `.controller.ts`, `.service.ts`
+- DTOs live in `src/<feature>/dto/`
+
+## Controllers
+- Controllers are THIN — no business logic, no direct DB calls
+- Only: receive request → call service → return result
+- Use `@Body()`, `@Param()`, `@Query()` decorators
+- Always apply `ParseIntPipe` / `DefaultValuePipe` for numeric query params
+
+## Services
+- Services own ALL business logic
+- Services call: Prisma, MetricsService, getLogger()
+- Async methods return typed Promises
+- Use `try/catch` for error handling; update run status on failure
+
+## DTOs
+```typescript
+// Always use class-validator decorators
+export class CreateScenarioDto {
+  @IsEnum(ScenarioType)
+  type: ScenarioType;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  name?: string;
+}
+```
+
+## Dependency Injection
+- Always inject via constructor
+- Use `@InjectMetric('metric_name')` for Prometheus metrics
+- Use `@Global()` for PrismaModule so it's available everywhere
+
+## Error handling
+- Use NestJS built-in exceptions: `NotFoundException`, `BadRequestException`
+- Sentry captures go in service layer, not controllers
+- Always log errors with `getLogger().error(message, { context })`
+
+## Health checks
+- `GET /health` must always return 200 when DB is reachable
+- Use `@nestjs/terminus` for health indicators

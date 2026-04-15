@@ -1,0 +1,34 @@
+---
+description: Hard stack constraints for Signal Lab. These rules are non-negotiable.
+globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
+alwaysApply: true
+---
+
+# Stack Constraints
+
+## NEVER replace these technologies
+- Frontend: Next.js (App Router), shadcn/ui, Tailwind CSS, TanStack Query, React Hook Form
+- Backend: NestJS
+- Database: PostgreSQL + Prisma ORM
+- Observability: Prometheus, Grafana, Loki, Sentry
+- Infrastructure: Docker Compose
+
+## Frontend rules
+- ALWAYS use shadcn/ui components — never raw `<input>`, `<button>`, `<select>` HTML elements
+- ALWAYS use TanStack Query (`useQuery`, `useMutation`) for server state — never `useEffect` + `fetch`
+- ALWAYS use React Hook Form + Zod for forms — never uncontrolled inputs or manual state
+- ALWAYS use App Router patterns — never Pages Router (`pages/` directory)
+- Server Components by default; add `'use client'` only when interactivity requires it
+
+## Backend rules
+- ALWAYS use NestJS decorators and DI — never plain Express handlers
+- ALWAYS validate request bodies with class-validator DTOs
+- ALWAYS use Prisma for database access — never raw SQL or other ORMs
+
+## Observability rules
+- NEVER remove Prometheus metric registration
+- NEVER remove Loki log calls from scenario handlers
+- NEVER remove Sentry.captureException from system_error scenario
+
+## Enforcement
+Violations of these rules require explicit justification in a PR description.

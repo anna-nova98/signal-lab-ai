@@ -1,0 +1,13 @@
+{
+  "name": "Post-Scenario Observability Verify",
+  "version": "1.0.0",
+  "description": "After modifying scenario.service.ts, automatically reminds to verify observability signals",
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["apps/api/src/scenario/scenario.service.ts"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "scenario.service.ts was just modified. Please verify the observability checklist: (1) Does every scenario case in the switch statement call this.metrics.recordRun() and this.metrics.recordDuration()? (2) Does every private run* method call getLogger() with both scenario_id and scenario_type fields? (3) Does runSystemError() call Sentry.captureException() with scope tags? (4) Is the try/catch in executeScenario() updating the run status to FAILED on error? Report any missing signals and suggest fixes."
+  }
+}

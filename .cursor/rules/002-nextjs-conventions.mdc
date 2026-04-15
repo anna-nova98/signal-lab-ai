@@ -1,0 +1,56 @@
+---
+description: Next.js App Router conventions for Signal Lab frontend
+globs: ["apps/web/src/**/*.ts", "apps/web/src/**/*.tsx"]
+alwaysApply: true
+---
+
+# Next.js Conventions
+
+## App Router
+- All pages live in `src/app/`
+- Use `page.tsx` for route pages, `layout.tsx` for layouts
+- NEVER create a `pages/` directory
+
+## Component patterns
+- Default to Server Components (no `'use client'`)
+- Add `'use client'` ONLY when you need: hooks, event handlers, browser APIs
+- Keep client components small and leaf-level
+
+## Data fetching
+```typescript
+// ✅ Correct — TanStack Query in client component
+const { data } = useQuery({
+  queryKey: ['scenarios'],
+  queryFn: fetchScenarios,
+});
+
+// ❌ Wrong — never do this
+const [data, setData] = useState(null);
+useEffect(() => { fetch('/api/...').then(...) }, []);
+```
+
+## Forms
+```typescript
+// ✅ Correct — React Hook Form + Zod
+const { register, handleSubmit } = useForm<FormValues>({
+  resolver: zodResolver(schema),
+});
+
+// ❌ Wrong — never uncontrolled or manual state forms
+const [value, setValue] = useState('');
+```
+
+## Styling
+- ALWAYS use Tailwind CSS utility classes
+- ALWAYS use `cn()` from `@/lib/utils` for conditional classes
+- NEVER use inline styles or CSS modules
+
+## shadcn/ui
+- Import from `@/components/ui/<component>`
+- NEVER use raw HTML form elements — always shadcn equivalents
+- Use `Button`, `Input`, `Select`, `Card`, `Badge`, `Label`
+
+## API calls
+- All API functions live in `src/lib/api.ts`
+- Use typed interfaces for all API responses
+- Handle errors in mutation `onError` callbacks

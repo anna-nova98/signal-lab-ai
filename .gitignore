@@ -1,0 +1,30 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Next.js
+apps/web/.next/
+apps/web/out/
+
+# NestJS
+apps/api/dist/
+
+# Prisma
+apps/api/node_modules/
+
+# Docker volumes (local dev)
+.docker/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+*.swp
+*.swo

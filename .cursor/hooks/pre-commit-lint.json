@@ -1,0 +1,13 @@
+{
+  "name": "Pre-commit Lint & Format Check",
+  "version": "1.0.0",
+  "description": "Runs ESLint and Prettier checks before any file write to catch issues early",
+  "when": {
+    "type": "preToolUse",
+    "toolTypes": ["write"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Before writing this file, verify: (1) The code follows the conventions in .cursor/rules/ — check stack constraints, NestJS/Next.js patterns, and observability guardrails. (2) If this is a scenario handler, confirm it emits all three signals: Prometheus metric, structured log with scenario_id and scenario_type, and Sentry for system_error. (3) If this is a React component, confirm it uses shadcn/ui components and TanStack Query (not useEffect+fetch). Report any violations before proceeding."
+  }
+}

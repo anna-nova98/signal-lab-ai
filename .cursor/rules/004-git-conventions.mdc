@@ -1,0 +1,53 @@
+---
+description: Git commit and branch conventions for Signal Lab
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Git Conventions
+
+## Commit format (Conventional Commits)
+```
+<type>(<scope>): <short description>
+
+[optional body]
+
+[optional footer]
+```
+
+### Types
+- `feat` — new feature
+- `fix` — bug fix
+- `chore` — maintenance, deps, config
+- `docs` — documentation only
+- `refactor` — code change without feature/fix
+- `test` — adding or updating tests
+- `ci` — CI/CD changes
+- `obs` — observability changes (metrics, logs, dashboards)
+
+### Scopes
+- `api` — NestJS backend
+- `web` — Next.js frontend
+- `infra` — Docker, Prometheus, Grafana, Loki config
+- `prisma` — schema or migrations
+- `cursor` — .cursor/ AI layer changes
+
+### Examples
+```
+feat(api): add latency_spike scenario handler
+fix(web): correct TanStack Query stale time
+obs(infra): add p99 latency panel to Grafana dashboard
+chore(prisma): add index on ScenarioRun.createdAt
+cursor(skills): add observability-check skill
+```
+
+## Branch naming
+- `feat/<short-description>`
+- `fix/<short-description>`
+- `chore/<short-description>`
+
+## Rules
+- No direct commits to `main`
+- Squash merge PRs
+- PR title must follow Conventional Commits format
+- Each commit should be atomic (one logical change)

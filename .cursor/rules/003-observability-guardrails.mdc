@@ -1,0 +1,65 @@
+---
+description: Observability instrumentation rules — every scenario must emit signals
+globs: ["apps/api/src/**/*.ts"]
+alwaysApply: true
+---
+
+# Observability Guardrails
+
+## The Three-Signal Rule
+Every scenario handler MUST emit ALL THREE signals:
+1. **Prometheus metric** — via `MetricsService`
+2. **Structured log** — via `getLogger()` with required fields
+3. **Sentry** — required only for `system_error`; optional for others
+
+## Prometheus
+```typescript
+// ✅ Required pattern
+this.metrics.recordRun(scenarioType, 'success' | 'error');
+this.metrics.recordDuration(scenarioType, durationMs);
+
+// Metric naming convention
+// signallab_<noun>_<unit>
+// Examples: signallab_scenario_runs_total, signallab_scenario_duration_ms
+```
+
+## Structured Logs
+```typescript
+// ✅ Required fields — always include both
+log.info('message', {
+  scenario_id: id,        // REQUIRED
+  scenario_type: type,    // REQUIRED
+  // additional context fields are welcome
+});
+
+// Log levels by scenario
+// cpu_spike    → info
+// memory_leak  → warn
+// http_errors  → error
+// system_error → error
+// latency_spike → info
+// custom       → info
+```
+
+## Sentry
+```typescript
+// ✅ Required for system_error
+Sentry.withScope((scope) => {
+  scope.setTag('scenario_id', id);
+  scope.setTag('scenario_type', 'system_error');
+  Sentry.captureException(error);
+});
+```
+
+## Adding a new scenario
+When adding a new `ScenarioType`:
+1. Add enum value to `prisma/schema.prisma`
+2. Add case to `executeScenario` switch in `scenario.service.ts`
+3. Register a Prometheus metric in `metrics.module.ts`
+4. Add metric method to `metrics.service.ts`
+5. Emit log with `scenario_id` and `scenario_type`
+6. Update `SCENARIO_OPTIONS` in `ScenarioRunner.tsx`
+
+## Grafana dashboard
+- New metrics must be added to `infra/grafana/dashboards/signal-lab-overview.json`
+- Use `signallab_` prefix in all PromQL queries
